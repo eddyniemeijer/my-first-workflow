@@ -8,10 +8,20 @@ on:
         type: string
         required: true
         default: World
+    outputs:
+      current-time:
+        description: 'Greeting time'
+        value: ${{ jobs.reusable-job.outputs.current-time }}
 
 jobs:
   reusable-job:
     runs-on: ubuntu-latest
+    outputs: 
+      current-time: ${{ steps.time.outputs.time }}
     steps:
       - name: Greetings to someone
         run: echo "Hello ${{ inputs.who-to-greet }}"
+
+      - name: Setting time
+        id: time
+        run: echo "time=$(date)" >> $GITHUB_OUTPUT
