@@ -1,0 +1,53 @@
+name: My First Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        type: environment
+        required: true
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    needs: Build
+    environment: Test
+    steps:
+      - run: echo "Test environment ran"
+
+  Load-Test:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    needs: Build
+    environment: Load-Test
+    steps:
+      - run: |
+          echo "Load-Test environment ran."
+          sleep 15
+
+  Production:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    needs: [Test, Load-Test]
+    environment: 
+      name: Production
+      url: https://writeabout.net
+    if: github.event.inputs.environment == 'Production'
+    steps:
+      - run: |
+          echo "Step 1: Production environment ran"
+          sleep 10
+      - run: |
+          echo "Step 2: Production environment ran"
+          sleep 10
+      - run: |
+          echo "Step 3: Production environment ran"
+          sleep 10
+      - run: |
+          echo "Step 4: Production environment ran"
+          sleep 10
+      - run: |
+          echo "Step 5: Production environment ran"
+          sleep 10
